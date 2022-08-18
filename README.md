@@ -22,5 +22,11 @@ This module is a crawler built by someone else in the team and I just take it. E
 
 ### 3. WORD FREQ CALCULATOR
 This part provides two modules to extract text and construct panel data based on existing reports files(in .txt format). 
-
 - Since some of the texts under the expectation part in a report are directly exported from WIND terminal, I developed the module [`extract_expc_panel`](./Word_freq/extract_expc_panel.py) to extract panel info directly from a excel table, where the texts under expec as well as fund info are saved.
+- After saving the reports downloaded by the crawler and converted to .txt format(refer to [Crawler](./Crawler/)), use [extract_full_panel](./Word_freq/extract_full_panel.py) to generate a excel table that summarises the report info.
+
+After we get two panels, use:
+- [cal_expc_word_freq](./Word_freq/cal_expc_word_freq.py), and
+- [cal_word_freq](./Word_freq/cal_word_freq.py)
+
+to calculate word and sent freq based on the content of the reports. The [utils](./Word_freq/utils.py) module saves some funcs that I think should be isolated from the two moduls mentioned above to make the modules tidier. 
