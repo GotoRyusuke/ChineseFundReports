@@ -3,7 +3,8 @@ This is a project to:
 - :heavy_check_mark: crawl open fund reports from mainly two sources:
   - [CNINF](http://www.cninfo.com.cn/), and
   - [EastMoney](https://www.eastmoney.com/);
-- :heavy_check_mark: extract the expectation part from the reports;
+- :heavy_check_mark: convert pdf reports to txt file, and extract the expectation part from the reports;
+- :heavy_check_mark: train a **word2vec** model and get some similar words for dicts at hand based on the corpus constructed using fund reports;
 - :heavy_check_mark: do some word freq calculation based on a specific dictionary
 
 ## Structure of the projects
