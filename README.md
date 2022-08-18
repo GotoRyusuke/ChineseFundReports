@@ -7,7 +7,7 @@ This is a project to:
 - :heavy_check_mark: train a **word2vec** model and get some similar words for dicts at hand based on the corpus constructed using fund reports;
 - :heavy_check_mark: do some word freq calculation based on a specific dictionary
 
-## Structure of the projects
+## Structure of the project
 ### 1. CNINF CRAWLER
 A **crawler** is constructed to crawl info and reports from both source of reports. A **pdf-to-txt convertor module** specific to my task is also introduced.
 Basically, the convertor module can be revised slightly to fit in with any other similar needs.
