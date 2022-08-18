@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 '''
-Some pre-process functions
+Some useful functions.
 
 '''
 import pandas as pd
@@ -8,7 +9,6 @@ import numpy as np
 import jieba
 
 def get_type(t):
-    
     type_dict = {'A': '年报',
                  'Q': '季报',
                  'H': '半年报',

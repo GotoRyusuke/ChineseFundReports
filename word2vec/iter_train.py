@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Train Word2Vec using a iterator instead of a txt file
 '''
@@ -27,19 +28,6 @@ def cut_sentence(content: str):
             eos_idx = word_count
         word_count += 1
     return sentences
-
-def process_single_file(file_path, stop_wrods):
-    with open(file_path, 'r', encoding = 'utf-8') as file:
-        content = file.read()
-        
-    sentences = cut_sentence(content)
-
-    output = []
-    for sentence in sentences:
-        temp_sent = ' '.join(sentence)
-        for symbol in stop_words:
-            temp_sent = temp_sent.replace(symbol, '')
-        new_sent = [word for word in temp_sent.strip().split(' ') if word != '']
  
 class MySentences(object):
     def __init__(self, dirname, stopwords_path):
@@ -79,10 +67,9 @@ jieba_add_word = pd.read_excel(jieba_add_word_path)['word']
 for word in jieba_add_word:
     jieba.add_word(word)
 
+os.makedirs(model_path, exist_ok = True)
 
-if not os.path.exists(model_path):
-    os.makedirs(model_path)
-                    
+# initialise the iterable
 sentences = MySentences(content_path, stopwords_path)
 
 # hyperparameters

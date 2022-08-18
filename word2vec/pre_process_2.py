@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Expand the translated LM dict (strong modal, weak modal, uncertainty, and certain)
 Steps:

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Expand the translated LM dict (strong modal, weak modal, uncertainty, and certain)
 Steps:
@@ -73,40 +74,4 @@ model_path = 'C:/Users/niccolo/Desktop/QLFtask/eastmoney/eastmoney_word2vec_mode
 model_name = model_path + "/v3/120vec_10win.model"
 similar_word_df_name = model_path + "/v3/similar_word"
 
-print("load model...")
-model = word2vec.Word2Vec.load(model_name)
-
-raw_dict_path = 'C:/Users/niccolo/Desktop/QLFtask/eastmoney/dicts/lm_cn_dict2.csv'
-raw_dict = pd.read_csv(raw_dict_path, encoding = 'gbk')
-
-raw_sm = raw_dict.iloc[:,0].dropna()
-raw_wm = raw_dict.iloc[:,1].dropna()
-raw_unce = raw_dict.iloc[:,2].dropna()
-raw_ce = raw_dict.iloc[:,3].dropna()
-
-
-similar_sm_df = get_similar_words(raw_sm, model = model)
-similar_wm_df = get_similar_words(raw_wm, model = model)
-similar_unce_df = get_similar_words(raw_unce, model = model)
-similar_ce_df = get_similar_words(raw_ce, model = model)
-
-similar_sm_df.to_excel(similar_word_df_name + '_sm_ver3.xlsx', index = False, encoding = 'gbk')
-similar_wm_df.to_excel(similar_word_df_name + '_wm_ver3.xlsx' ,index = False, encoding = 'gbk')
-similar_unce_df.to_excel(similar_word_df_name + '_unce_ver3.xlsx' ,index = False, encoding = 'gbk')
-similar_ce_df.to_excel(similar_word_df_name + '_ce_ver3.xlsx' ,index = False, encoding = 'gbk')
-
-
-raw_ex = pd.read_excel(model_path + '/v0/raw_new_dict_v0.xlsx')
-raw_ex_sm = raw_ex['strong_modal']
-raw_ex_wm = raw_ex['weak_modal']
-raw_ex_un = raw_ex['uncertainty']
-raw_ex_ce = raw_ex['certainty']
-
-new_ex_sm = list(raw_ex_sm.drop_duplicates(keep = 'first').dropna())
-new_ex_wm = list(raw_ex_wm.drop_duplicates(keep = 'first').dropna())
-new_ex_un = list(raw_ex_un.drop_duplicates(keep = 'first').dropna())
-new_ex_ce = list(raw_ex_ce.drop_duplicates(keep = 'first').dropna())
-
-new_ex = [new_ex_sm, new_ex_wm, new_ex_un, new_ex_ce]
-new_ex = pd.DataFrame(new_ex).transpose()
-new_ex.to_excel(model_path + '/v0/new_dictv0.xlsx', index = False, encoding = 'gbk')
+# for getting the similar words, refer to get_similar module
