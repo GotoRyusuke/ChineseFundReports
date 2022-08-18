@@ -7,6 +7,16 @@ import re
 import numpy as np
 import jieba
 
+def get_type(t):
+    
+    type_dict = {'A': '年报',
+                 'Q': '季报',
+                 'H': '半年报',
+                 'M': '月报'}
+    if t not in type_dict.keys():
+        return ''
+    return '基金' + type_dict[t]
+
 def num_cn2eng(date:str):
     cn2eng_date_dict = {'一':1,
                         '二':2,

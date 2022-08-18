@@ -1,9 +1,25 @@
+# -*- coding: utf-8 -*-
 '''
+DESCRIPTION
+-----------
 This is a module to 
 1.extract the info about fund code, report date, filed date,
 from the title and path of a report;
 2. aggregate all info into a single panel data format, and;
 3. export as an excel file
+
+CONTENTS
+--------
+- <CLASS> panel_info_extractor
+
+OTHER INFO.
+-----------
+- Last upate: R4/8/18(Moku)
+- Author: GOTO Ryusuke 
+- Contact: 
+    - Email: yuhang1012yong@link.cuhk.edu.hk (preferred)
+    - WeChat: L13079237
+
 '''
 
 import os
@@ -12,36 +28,7 @@ import pandas as pd
 import numpy as np
 import re
 from tqdm import tqdm
-
-def get_type(t):
-    
-    type_dict = {'A': '年报',
-                 'Q': '季报',
-                 'H': '半年报',
-                 'M': '月报'}
-    if t not in type_dict.keys():
-        return ''
-    return '基金' + type_dict[t]
-
-
-def num_cn2eng(date:str):
-    cn2eng_date_dict = {'一':1,
-                        '二':2,
-                        '三':3,
-                        '四':4,
-                        '五':5,
-                        '六':6,
-                        '七':7,
-                        '八':8,
-                        '九':9,
-                        '零':0}
-    output = ''
-    for num in date:
-        if num in cn2eng_date_dict.keys():
-            num = cn2eng_date_dict[num]
-        
-        output += str(num)
-    return output
+from utils import num_cn2eng, get_type
 
 class panel_info_extractor: 
     def __init__(self,
@@ -50,6 +37,7 @@ class panel_info_extractor:
         
         self.all_file_path = all_file_path
         
+        # initialise the fund info dict, which can be used to match fund code to some other fund info
         raw_dict = pd.read_csv(code_info_dict_path, encoding = 'gbk')
         raw_dict.columns = ['code','name', 'inv_typeI', 'inv_type_II', 'fund_type']
         code_info_dict = dict([(raw_dict.iloc[idx,0].split('.')[0], raw_dict.iloc[idx,:]) for idx in range(len(raw_dict))])
