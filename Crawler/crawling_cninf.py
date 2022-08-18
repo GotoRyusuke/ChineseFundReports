@@ -24,9 +24,8 @@ OTHER INFO.
 - Last upate: R4/8/1(Getsu)
 - Author: GOTO Ryusuke 
 - Contact: 
-    - Email: 1155169839@link.cuhk.edu.hk (preferred)
+    - Email: yuhang1012yong@link.cuhk.edu.hk (preferred)
     - WeChat: L13079237
-    
 '''
 import requests
 import random
