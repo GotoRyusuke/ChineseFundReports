@@ -26,7 +26,7 @@ This part provides two methods to train a word2vec model based on the corpus at 
     3. [`word2vec_train`](./word2vec/word2vec_train.py)train word2vec one the single file derived in step 2, and find the synonyms
     for the words in our preliminary Chinese LM dicts
 2. method II:
-    Instead of first aggregating all texts in the corpus and training the model, [`iter_train`](./word2vec/iter_train.py) uses an iterable to provide content to the model for training, which is more recommended by gensim. Refer to gensim for more details.
+    Instead of first aggregating all texts in the corpus and training the model, [`iter_train`](./word2vec/iter_train.py) uses an iterable to provide content to the model for training, which is more recommended by gensim. Refer to [gensim](https://radimrehurek.com/gensim/apiref.html#api-reference) for more details.
 
 ### 3. EASTMONEY CRAWLER
 This module is a crawler built by someone else in the team and I just take it. EastMoney does not have as many reports as CNINF does, so I hardly use it since my cninf crawler was built. The codes are not easy to read, and I **highly recommend** you to use cninf crawler instead as it is more organised.
