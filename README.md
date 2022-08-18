@@ -17,7 +17,7 @@ This part consists of two modules:
 3. [`extract_expc_from_report`](./Crawler/extract_expc_from_report.py): the module to extract the expectation part from a certain report, if any.
 
 ### 2. EASTMONEY CRAWLER
-This module is a crawler built by someone else in the team and I just take it. EastMoney does not have as many reports as CNINF does, so I hardly use it since my cninf crawler was built. The codes are not easy to read, and I **highly recommend** you to use cninf crawler directly as it is more organised.
+This module is a crawler built by someone else in the team and I just take it. EastMoney does not have as many reports as CNINF does, so I hardly use it since my cninf crawler was built. The codes are not easy to read, and I **highly recommend** you to use cninf crawler instead as it is more organised.
 
 
 ### 3. WORD FREQ CALCULATOR
