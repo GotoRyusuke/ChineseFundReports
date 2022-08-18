@@ -18,9 +18,3 @@ This part consists of two modules:
 
 ### 2. EASTMONEY CRAWLER
 This module is a crawler built by someone else in the team and I just take it. EastMoney does not have as many reports as CNINF does, so I hardly use it since my cninf crawler was built. The codes are not easy to read, and I **highly recommend** you to use cninf crawler directly as it is more organised.
-
-
-### 3. WORD FREQ CALCULATOR
-This part provides two modules to extract text and construct panel data based on existing reports files(in .txt format). 
-
-- Since some of the texts under the expectation part in a report are directly exported from WIND terminal, I developed the module [`extract_expc_panel`](./Word_freq/extract_expc_panel.py) to extract panel info directly from a excel table, where the texts under expec as well as fund info are saved.
