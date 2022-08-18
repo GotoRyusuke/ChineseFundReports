@@ -10,3 +10,7 @@ This is a project to:
 ### 1. CNINF CRAWLER
 A **crwaler** is constructed to crawl info and reports from both source of reports. A **pdf-to-txt convertor module** specific to my task is also introduced.
 Basically, The convertor module can be revised slightly to fit in with any other similar needs.
+
+This part consists of two modules:
+1. [`cninf_crawler`](./Crawler/cninf_crawler.py): the module to crawl info and reports from CNINF website
+2. [`pdf2txt`](./Crawler/pdf2txt.py): the module to convert fund reports in .pdf format to .txt format.
