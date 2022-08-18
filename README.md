@@ -13,4 +13,5 @@ Basically, The convertor module can be revised slightly to fit in with any other
 
 This part consists of two modules:
 1. [`cninf_crawler`](./Crawler/crawling_cninf.py): the module to crawl info and reports from CNINF website
-2. [`pdf2txt`](./Crawler/pdf2txt.py): the module to convert fund reports in .pdf format to .txt format.
+2. [`pdf2txt`](./Crawler/pdf2txt.py): the module to convert fund reports in .pdf format to .txt format.\
+3. [`extract_expc_from_report`](./Crawler/extract_expc_from_report.py): the module to extract the expectation part from a certain report, if any.
