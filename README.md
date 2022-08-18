@@ -26,7 +26,9 @@ This part provides two modules to extract text and construct panel data based on
 - After saving the reports downloaded by the crawler and converted to .txt format(refer to [`Crawler` repository](./Crawler/)), use [`extract_full_panel`](./Word_freq/extract_full_panel.py) to generate a excel table that summarises the report info.
 
 After we get two panels, use:
-- [`cal_expc_word_freq]`(./Word_freq/cal_expc_word_freq.py), and
+- [`cal_expc_word_freq`](./Word_freq/cal_expc_word_freq.py), and
 - [`cal_word_freq`](./Word_freq/cal_word_freq.py)
 
 to calculate word and sent freq based on the content of the reports. The [`utils`](./Word_freq/utils.py) module saves some funcs that I think should be isolated from the two moduls mentioned above to make the modules tidier. 
+
+Finally, after link the results of expc to full panel, use [`fill_empty_expc`](./Word_freq/fill_empty_expc.py) to fill in the reports where the expectation part is not filed. The filling rules are summarised in the Chinese version logs which is not open to the public.
