@@ -8,7 +8,7 @@ import os
 import re
 import numpy as np
 from tqdm import tqdm
-from cal_expc_word_freq import LM_freq_count_expc
+from Word_freq.cal_expc_word_freq import LM_freq_count_expc
 
 comp_df_path = 'C:/Users/niccolo/Desktop/QLFtask/eastmoney/word_freq/tables/comp_panel_wf_simple.xlsx'
 comp_df = pd.read_excel(comp_df_path)
