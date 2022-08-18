@@ -10,24 +10,26 @@ This is a project to:
 ## Structure of the projects
 ### 1. CNINF CRAWLER
 A **crawler** is constructed to crawl info and reports from both source of reports. A **pdf-to-txt convertor module** specific to my task is also introduced.
-Basically, The convertor module can be revised slightly to fit in with any other similar needs.
+Basically, the convertor module can be revised slightly to fit in with any other similar needs.
 
-This part consists of two modules:
+This part consists of 3 modules:
 1. [`cninf_crawler`](./Crawler/crawling_cninf.py): the module to crawl info and reports from CNINF website;
 2. [`pdf2txt`](./Crawler/pdf2txt.py): the module to convert fund reports in .pdf format to .txt format;
 3. [`extract_expc_from_report`](./Crawler/extract_expc_from_report.py): the module to extract the expectation part from a certain report, if any.
 
 ### 2. WORD2VEC
-This part provides two methods to train a word2vec model based on the corpus at hand
+This part provides two ways to train a word2vec model based on the corpus at hand
 
 1. method I:
-    1. [`process_1`](./word2vec/pre_process_1.py)read the available reports one by one, aggregate all processed reports;
+    1. [`process_1`](./word2vec/pre_process_1.py)reads the available reports one by one, aggregates all processed reports;
     into a single file, where each line is a sentence
-    2. [`process_2`](./word2vec/pre_process_2.py)import files, remove stop words;
-    3. [`word2vec_train`](./word2vec/word2vec_train.py)train word2vec one the single file derived in step 2, and find the synonyms
+    2. [`process_2`](./word2vec/pre_process_2.py)imports files and removes stop words;
+    3. [`word2vec_train`](./word2vec/word2vec_train.py)trains word2vec one the single file derived in step 2, and finds the synonyms
     for the words in our preliminary Chinese LM dicts
 2. method II:
     Instead of first aggregating all texts in the corpus and training the model, [`iter_train`](./word2vec/iter_train.py) uses an iterable to provide content to the model for training, which is more recommended by gensim. Refer to [gensim](https://radimrehurek.com/gensim/apiref.html#api-reference) for more details.
+
+After the model params are set, use [`get_similar`](./word2vec/get_similar.py) module to get similar words for our dicts at hand. This module provides two ways (implemented with 4 methods) to get similar words. Check the comments for detailed usage.
 
 ### 3. EASTMONEY CRAWLER
 This module is a crawler built by someone else in the team and I just take it. EastMoney does not have as many reports as CNINF does, so I hardly use it since my cninf crawler was built. The codes are not easy to read, and I **highly recommend** you to use cninf crawler instead as it is more organised.
@@ -42,6 +44,6 @@ After we get two panels, use
 - [`cal_expc_word_freq`](./Word_freq/cal_expc_word_freq.py), and
 - [`cal_word_freq`](./Word_freq/cal_word_freq.py)
 
-to calculate word and sent freq based on the content of the reports. The [`utils`](./Word_freq/utils.py) module saves some funcs that I think should be isolated from the two moduls mentioned above to make the modules tidier. 
+to calculate word and sent freq based on the content of the reports. The [`utils`](./Word_freq/utils.py) module saves some funcs that I think should be isolated from the two modules mentioned above to make the modules tidier. 
 
-Finally, after link the results of expc to full panel, use [`fill_empty_expc`](./Word_freq/fill_empty_expc.py) to fill in the reports where the expectation part is not filed. The filling rules are summarised in the Chinese version logs which is not open to the public.
+Finally, after linking the results of expc to full panel, use [`fill_empty_expc`](./Word_freq/fill_empty_expc.py) to fill in the reports where the expectation part is not filed. The filling rules are summarised in the Chinese version logs which is not open to the public.
