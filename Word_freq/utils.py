@@ -41,11 +41,10 @@ def find_info(column:str):
     annual_detector = re.compile(r'年[度,报]')
     mid_detector = re.compile(r'(半年|中期)')
     
-    year = re.findall(year_detector, title)
-    quarter = re.findall(quarter_detector, title)
-    annual = re.findall(annual_detector, title)
-    mid = re.findall(mid_detector, title)
-    month = re.findall(month_detector, title)
+    year = re.findall(year_detector, column)
+    quarter = re.findall(quarter_detector, column)
+    annual = re.findall(annual_detector, column)
+    mid = re.findall(mid_detector,column)
     
     if len(year) > 0:
         year = num_cn2eng(year[0][:-1])
