@@ -6,12 +6,11 @@ A modul to calculate LM word-freq for expectation part in reports.
 
 CONTENTS
 --------
-- <FUNC> pre_process
 - <CLASS> LM_freq_count_expc
 
 OTHER INFO.
 -----------
-- Last upate: R4/8/1(Getsu)
+- Last upate: R4/8/19(Kim)
 - Author: GOTO Ryusuke 
 - Contact: 
     - Email: yuhang1012yong@link.cuhk.edu.hk (preferred)
@@ -19,143 +18,20 @@ OTHER INFO.
 '''
 import os
 import pandas as pd
-import jieba
-import time
-import re
-from utils import load_stopwords, load_jieba, cut_sentence, cal_certain_tone,load_stopwords
-from collections import Counter
+from chinese_counter import cn_counter
 from joblib import Parallel, delayed
-from tqdm import tqdm
-
 
 class LM_freq_count_expc:
     def __init__(self,
                  expc_panel_path: str,
                  lm_dict_path: str,
                  stop_words_path: str):
-
         # initialise the panel df
         self.panel_df = pd.read_excel(expc_panel_path)
+        # initialise the Chinese counter
+        self.cn_counter = cn_counter(lm_dict_path = lm_dict_path,
+                                     stop_words_path = stop_words_path)
 
-        # laod the stop words
-        self.stop_words = load_stopwords(stop_words_path)
-        # claim the dict words in case that they would be split by jieba
-        load_jieba(lm_dict_path)  
-        
-        # initialise the LM dict
-        dict_lm = pd.read_excel(lm_dict_path)
-        dict_names = dict_lm.columns
-        self.dict_lm = dict([(dict_name, 
-                              dict_lm[dict_name].dropna().values) 
-                             for dict_name in dict_names])
-
-    def count_wf_by_dict(self, content: str): 
-        '''
-        Read a string, count the word freqs for all 4 sub-dicts, and finally
-        calculate the 5 indicators.
-
-        Parameters
-        ----------
-        content: str
-            a string, which contains the content from an expectation part.
-        
-        Returns
-        -------
-        count_result: dict
-            A dict of count resutls
-
-        '''     
-        spaces = re.compile(r'\s{2,}')
-        content = re.sub(spaces, ' ', content)
-        sents_old = cut_sentence(content, mode = 'original')
-        
-        content_new = []
-        for sent in sents_old:
-            temp_sent = ' '.join(sent)
-            for symbol in self.stop_words:
-                temp_sent = temp_sent.replace(symbol, '')
-            new_sent = [word for word in temp_sent.strip().split(' ') if word != '']
-            content_new += new_sent
-        
-        # start counting
-        count_result = {}
-        count_result['num_words'] = len(content_new)
-        counter = dict(Counter(content_new))
-        counter_keys = list(counter.keys())
-        for dict_name, dict_wl in self.dict_lm.items():
-            dict_count = 0
-            for kw in dict_wl:
-                if kw in counter_keys:
-                    dict_count += counter[kw]
-            
-            count_result[dict_name] = dict_count
-        
-        count_result['ct_uncertainty'] = cal_certain_tone(count_result, 'ct_uncertainty')
-        count_result['ct_certainty'] = cal_certain_tone(count_result, 'ct_certainty')
-        count_result['ct_all'] = cal_certain_tone(count_result, 'ct_all')
-        count_result['ct_modals'] = cal_certain_tone(count_result, 'ct_modals')
-        count_result['ct_certains'] = cal_certain_tone(count_result, 'ct_certains')
-            
-        return count_result
-    
-    def count_sf_by_dict(self, content: str):
-        '''
-        Read a string, and count the sent freqs for all 4 sub-dicts, regardless
-        whether there is the prob of double polairty in the sent.
-
-        Parameters
-        ----------
-        content: str
-            a string, which contains the content from an expectation part.
-        
-        Returns
-        -------
-        count_result: dict
-            A dict of count results
-        
-        '''
-        spaces = re.compile(r'\s{2,}')
-        content = re.sub(spaces, ' ', content)
-        output = {}
-        for mode in ['original', 'sub-sent']:
-            sents_old = cut_sentence(content, mode = mode)
-            
-            content_new = []
-            for sent in sents_old:
-                temp_sent = ' '.join(sent)
-                for symbol in self.stop_words:
-                    temp_sent = temp_sent.replace(symbol, '')
-                new_sent = [word for word in temp_sent.strip().split(' ') if word != '']
-                content_new.append(new_sent)
-                
-            # start counting
-            temp_result = dict([(key,0) for key in self.dict_lm.keys()])
-
-            for sent in content_new:
-                counter = dict(Counter(sent))
-                counter_keys = list(counter.keys())
-                for dict_name, dict_wl in self.dict_lm.items():
-                    dict_count = 0
-                    for kw in dict_wl:
-                        if kw in counter_keys:
-                            dict_count += 1
-                            break
-                    
-                    temp_result[dict_name] += dict_count
-            
-            count_result = {}
-            for key in temp_result.keys():
-                count_result[mode + '_' + key] = temp_result[key]
-            count_result[mode + '_num_sents'] = len(content_new)       
-            count_result[mode + '_sen_uncertainty'] = cal_certain_tone(temp_result, 'ct_uncertainty')
-            count_result[mode + '_sen_certainty'] = cal_certain_tone(temp_result, 'ct_certainty')
-            count_result[mode + '_sen_all'] = cal_certain_tone(temp_result, 'ct_all')
-            count_result[mode + '_sen_modals'] = cal_certain_tone(temp_result, 'ct_modals')
-            count_result[mode + '_sen_certains'] = cal_certain_tone(temp_result, 'ct_certains')
-            
-            output = output | count_result
-        return output
-    
     def count_by_code(self, code: str):
         '''
         Calculate the word freq and sent freq for all contents under the same
@@ -193,18 +69,18 @@ class LM_freq_count_expc:
         # record wf and sf results
         for idx in preamble_info.index:
             content = content_list[idx]
-            wf_result = self.count_wf_by_dict(content)
-            sf_result = self.count_sf_by_dict(content)
+            wf_result = self.cn_counter.count_wf_by_dict(content)
+            sf_result = self.cn_counter.count_sf_by_dict(content)
             
             # record wf
             for dict_name, wf in wf_result.items():
-                if dict_name in self.dict_lm.keys():
+                if dict_name in self.cn_counter.lm_dict.keys():
                     dict_name = 'num_' + dict_name
                 count_df.loc[idx, dict_name] = wf
 
             # record sf
             for dict_name, sf in sf_result.items():
-                if dict_name in self.dict_lm.keys():
+                if dict_name in self.cn_counter.lm_dict.keys():
                     dict_name = 'num_' + dict_name
                 count_df.loc[idx, dict_name] = sf
         
@@ -239,20 +115,18 @@ class LM_freq_count_expc:
         return output
     
 if __name__ == '__main__':
-    
     # expc_panel_path = 'C:/Users/niccolo/Desktop/QLFtask/eastmoney/word_freq/raw_data/agg_expc.xlsx' 
-    # lm_dict_path = 'C:/Users/niccolo/Desktop/QLFtask/eastmoney/dicts/LM_expanded_dictV2.xlsx'
-    # stop_words_path = 'C:/Users/niccolo/Desktop/QLFtask/eastmoney/word2vec/my_stop_words.xlsx'
+    # lm_dict_path = 'C:/Users/niccolo/Desktop/词句频统计（3个版本词典）/去除多义词词典/LM_expanded_dictV3.xlsx'
+    # stop_words_path = 'C:/Users/niccolo/Desktop/QLFtask/eastmoney/dicts/my_stop_words.xlsx'
 
     expc_panel_path = './agg_expc.xlsx'
     lm_dict_path = './LM_expanded_dictV3.xlsx'
     stop_words_path = './my_stop_words.xlsx'
-    
-  
         
     freq_expc = LM_freq_count_expc(expc_panel_path = expc_panel_path,
                                  lm_dict_path = lm_dict_path,
                                  stop_words_path = stop_words_path)
+    
     results = freq_expc.threading(32)
     results.to_excel('./expc_panel(dict ver3).xlsx', index = False)
     

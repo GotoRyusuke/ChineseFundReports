@@ -1,4 +1,8 @@
 # ChineseFundReports
+
+**(R4/8/19) Updates**: main logic for counting word & sent freqs has been separated to a new module named [`chinese_counter`](./Word_freq/chinese_counter.py) to make the main modules under `Word_freq` tidier.
+--------------------------------------------------------------------
+## Introduction
 This is a project to:
 - :heavy_check_mark: crawl open fund reports from mainly two sources:
   - [CNINF](http://www.cninfo.com.cn/), and
@@ -44,6 +48,8 @@ After we get two panels, use
 - [`cal_expc_word_freq`](./Word_freq/cal_expc_word_freq.py), and
 - [`cal_word_freq`](./Word_freq/cal_word_freq.py)
 
-to calculate word and sent freq based on the content of the reports. The [`utils`](./Word_freq/utils.py) module saves some funcs that I think should be isolated from the two modules mentioned above to make the modules tidier. 
+to calculate word and sent freq based on the content of the reports. The [`utils`](./Word_freq/utils.py) module saves some funcs that I think should be isolated from the two modules mentioned above to make the modules tidier.
+
+**(R4/8/19) Updates**: the main logic for counting word & sent freq has been isolated to a new module named [`chinese_counter`](./Word_freq/chinese_counter.py).
 
 Finally, after linking the results of expc to full panel, use [`fill_empty_expc`](./Word_freq/fill_empty_expc.py) to fill in the reports where the expectation part is not filed. The filling rules are summarised in the Chinese version logs which is not open to the public.
