@@ -1,7 +1,7 @@
 # ChineseFundReports
 --------------------------------------------------------------------
 ### (R4/8/19) Updates
-Main logic for counting word & sent freqs has been separated to a new class named [`chinese_counter`](./Word_freq/chinese_counter.py) to make the main classes under `Word_freq` tidier.
+Main logic for counting word & sent freqs has been separated to a new module named [`chinese_counter`](./Word_freq/chinese_counter.py) to make the main classes under `Word_freq` tidier.
 
 ## Introduction
 This is a project to:
