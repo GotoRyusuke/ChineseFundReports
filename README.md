@@ -1,5 +1,9 @@
 # ChineseFundReports
 --------------------------------------------------------------------
+### (R4/8/24) Updates
+Methods for fatching orgID, which is necessary when we are posting data to the server, is separated from cralwer class to a new class named cninf_orgid_finder;
+the workflow is now simpler and the codes more compact.
+
 ### (R4/8/19) Updates
 Main logic for counting word & sent freqs has been separated to a new module named [`chinese_counter`](./Word_freq/chinese_counter.py) to make the main classes under `Word_freq` tidier.
 
