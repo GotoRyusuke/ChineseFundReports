@@ -5,7 +5,7 @@
 if you find it returns an *error*.
 
 ### (R4/8/24) Updates
-Methods for fatching orgID, which is necessary when we are posting data to the server, is separated from cralwer class to a new class named cninf_orgid_finder;
+Methods for fatching orgID, which is necessary when we are posting data to the server, is separated from cralwer class to a new class named `cninf_orgid_finder`;
 the workflow is now simpler and the codes more compact.
 
 ### (R4/8/19) Updates
