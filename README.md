@@ -1,7 +1,7 @@
 # ChineseFundReports(巨潮资讯·东方财富基金报表爬取及项目提取)
 --------------------------------------------------------------------
 ### (R4/8/27) Updates
-`cninf_orgid` and `cninf_crawler' now support crawling info for stocks. Only a few stocks are tested, so some post data may have to be changed
+`cninf_orgid` and `cninf_crawler` now support crawling info for stocks. Only a few stocks are tested, so some post data may have to be changed
 if you find it returns an *error*.
 
 ### (R4/8/24) Updates
