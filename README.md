@@ -1,5 +1,9 @@
 # ChineseFundReports(巨潮资讯·东方财富基金报表爬取及项目提取)
 --------------------------------------------------------------------
+### (R4/8/27) Updates
+`cninf_orgid` and `cninf_crawler' now support crawling info for stocks. Only a few stocks are tested, so some post data may have to be changed
+if you find it returns an *error*.
+
 ### (R4/8/24) Updates
 Methods for fatching orgID, which is necessary when we are posting data to the server, is separated from cralwer class to a new class named cninf_orgid_finder;
 the workflow is now simpler and the codes more compact.
