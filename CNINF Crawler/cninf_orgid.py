@@ -50,10 +50,10 @@ class cninf_orgid_finder:
                        'X-Requested-With': 'XMLHttpRequest'
                        }
         
-        print('\nOBJECT INITIALISED SUCCESSFULLY.')
-        print('='*32)
+        print('Initialised successfully')
+        print('-'*32)     
         
-    def get_orgid(self, key:str, mode: str):
+    def get_orgid(self, key:str, mode = 'code', type_ = 'fund', verbose = True):
         '''
         A method to find the 'orgid' of a fund that is required when posting
         
@@ -61,10 +61,16 @@ class cninf_orgid_finder:
         ----------
         key: str
             Code or Name of the fund
-        mode: str
+        mode: str, default = 'code'
             Must be one of the followings:
                 - 'name': use name as the key, or
                 - 'code': use fund code as the key
+        type_: str, default = 'fund'
+            Fund or stock orgID to be found. Must be one of the following:
+                - 'fund';
+                - 'stock'
+        verbose: bool, default True
+            Whether to print info about the result 
         
         Returns
         -------
@@ -85,6 +91,7 @@ class cninf_orgid_finder:
             'Accept': 'application/json,text/plain,*/*',
             'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8'}
         
+        org_id = 'error'
         try:
             if mode == 'name':
                 url = 'http://www.cninfo.com.cn/new/information/topSearch/detailOfQuery'
@@ -99,16 +106,29 @@ class cninf_orgid_finder:
                 url = 'http://www.cninfo.com.cn/new/information/topSearch/query'
                 data = {'keyWord': key,
                        'maxNum': 10}
+                org_id = 'error'
                 r = requests.post(url, headers=hd, data=data)
                 
-                org_id = 'error'
-                for record in r.json():
-                    if '基金' in record['category'] or 'QDII' in record['category'] :
-                        org_id = record['orgId']
-                        break            
-        except:
-            org_id = 'error'
+                if type_ == 'stock':
+                    for record in r.json():
+                        if '股' in record['category']:
+                            print('found')
+                            org_id = record['orgId']
+                            break
+                else:                   
+                    for record in r.json():
+                        if '基金' in record['category'] or 'QDII' in record['category'] :
+                            org_id = record['orgId']
+                            break
+        except: pass
         
+        if verbose:
+            print('-'*20)
+            if org_id == 'error':
+                print(f'Error\n {key} not found.')
+            else:
+                print(f'Found\n -Keyword: {key}\n -OrgID: {org_id}')
+            print('-'*20)
         return org_id
     
     def init_key2orgid_dict(self, key_list: list, mode: str):
@@ -141,13 +161,12 @@ class cninf_orgid_finder:
             try:
                 org_id = self.get_orgid(key, mode)
             except:
-                print('SLEEP FOR A WHILE...')
+                print('Sleep for a while...')
                 time.sleep(10)
-                print('RESUMED...')
+                print('Resumed...')
                 org_id = self.get_orgid(key, mode)
 
             if org_id == 'error':
-                print(f'{key} not found or internet connection failed.')
                 failed_keys.append(key)
                 continue
             

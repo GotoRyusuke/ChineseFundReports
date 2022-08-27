@@ -146,9 +146,7 @@ class cninf_crawler:
     def __init__(self,
                  code2orgid_dict_path: str,
                  store_path: str, 
-                 target_weblink: str,):
-        
-        print('START INITIALISING OBJECT...')
+                 target_weblink: str):
         self.store_path = store_path
         self.target_weblink = target_weblink
         
@@ -182,14 +180,29 @@ class cninf_crawler:
         raw_dict = pd.read_excel(code2orgid_dict_path)
         self.code2orgid_dict = dict([(raw_dict.loc[idx,'code'], raw_dict.loc[idx,'post']) for idx in raw_dict.index])
         
-        print('\n OBJECT INITIALISED SUCCESSFULLY.')
-        print('='*35)        
+        # initialise report type dicts
+        fund_type_dict = {'all':'category_ndbg_jjgg;category_bndbg_jjgg;category_jdbg_jjgg',
+                          'quarter':'category_jdbg_jjgg',
+                          'annual':'category_ndbg_jjgg',
+                          'mid-term':'category_bndbg_jjgg'}
+        stock_type_dict = {'all':'category_ndbg_szsh;category_bndbg_szsh;category_yjdbg_szsh;category_sjdbg_szsh',
+                           'quarter': 'category_yjdbg_szsh, category_sjdbg_szsh',
+                           'annual': 'category_ndbg_szsh',
+                           'mid-term': 'category_bndbg_szsh'}
+        
+        self.report_type_dicts = {'fund': fund_type_dict,
+                                  'stock': stock_type_dict}
+        
+        print('Initialised successfully')
+        print('-'*25)        
         
     def crawl_single_fund(self,
                           code:str, 
                           start:str, 
                           end:str,
-                          report_type:str):
+                          report_type:str,
+                          type_: str,
+                          verbose = False):
         '''
         A method to get the list of all reports of a given fund between 
         [start] and [end]
@@ -208,6 +221,10 @@ class cninf_crawler:
                 'annual': annual report
                 'mid-term': mid-term report
                 'all': all periodical reports
+        type_: str
+            Fund or stock to be crawled. Should be one of the following:
+                - 'fund';
+                - 'stock'
                 
         Returns
         -------
@@ -219,24 +236,26 @@ class cninf_crawler:
         headers = self.headers
         headers['User-Agent'] = random.choice(self.user_agents)
         
-        type_dict = {'all':'category_ndbg_jjgg;category_bndbg_jjgg;category_jdbg_jjgg',
-                     'quarter':'category_jdbg_jjgg',
-                     'annual':'category_ndbg_jjgg',
-                     'mid-term':'category_bndbg_jjgg'}
+        type_dict = self.report_type_dicts[type_]
         type_flag = type_dict[report_type]
             
         period = start+'~'+end
         
-        print(f'START CRAWLING FUND {code}...')
-        print(f'REQUIREMENTS:\n -TIME:{period}\n -REPORT TYPE: {report_type}\n')
+        print(f'Start crawling {code}...')
+        print(f'Requirements:\n -Time:{start}\n      ~{end}\n -Report type: {report_type}\n')
         
         page_num = 1
-        stock = self.code2orgid_dict[code]
+        if type_ == 'fund':
+            stock = self.code2orgid_dict[code]
+            column = 'fund'
+        else:
+            stock = code
+            column = 'szse'
         
         query = {'pageNum': page_num,
                  'pageSize': 30,
                  'tabName': 'fulltext',
-                 'column': 'fund',  
+                 'column': column,  
                  'stock': stock,
                  'searchkey': '',
                  'secid': '',
@@ -249,7 +268,7 @@ class cninf_crawler:
         # get the first page first
         namelist = requests.post(query_path, headers=headers, data=query)
         report_list = namelist.json()['announcements']
-        print(f'PAGE {page_num} COMPLETED.')
+        print(f'Page {page_num} completed')
         
         # check if there are more pages, if True, continue the crawling
         while namelist.json()['hasMore']:
@@ -266,11 +285,16 @@ class cninf_crawler:
             namelist = requests.post(query_path, headers=headers, data=query)
             report_list += namelist.json()['announcements']
             
-            print(f'PAGE {page_num} COMPLETED.')
+            print(f'Page {page_num} completed')
 
-        # print('\n -NUM. OF REPORTS FOUND: %s \n'%(len(report_list)))
-        print('CRAWLING PROCEDURE COMPLETED.')
-        print('='*35)
+        print('All pages completed')
+        print('-'*25)
+        
+        if verbose:
+            print('Reports found:\n')
+            for record in report_list:
+                print(record['announcementTitle'])
+            print('-' * 35)
         return report_list
 
     def save_file(self,
