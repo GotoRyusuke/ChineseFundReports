@@ -20,6 +20,84 @@ CONTENTS
 import requests
 import random
 import time
+from tqdm import tqdm
+
+def find_info(user_agent: str, key: str, type_: str, mode: str):
+    '''
+    A method to find info about a fund/stock
+
+    Parameters
+    ----------
+    key : str
+        Fund code/name 
+    type_: str
+        Fund or stock to be found; should be one of the following:
+            - 'fund'
+            - 'stock'
+    mode : str
+        Find with fund code /name; should be one of the following:
+            - 'code'
+            - 'name'
+
+    Returns
+    -------
+    output: dict
+        A dict containing the following info:
+            - code
+            - name
+            - orgId
+            - type(stock/fund)
+            - type_d: detail type
+
+    '''
+    hd = {
+        'Host': 'www.cninfo.com.cn',
+        'Origin': 'http://www.cninfo.com.cn',
+        'Pragma': 'no-cache',
+        'Accept-Encoding': 'gzip,deflate',
+        'Connection': 'keep-alive',
+        'Content-Length': '70',
+        'User-Agent':  user_agent,
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Accept': 'application/json,text/plain,*/*',
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8'}
+    
+    info = {}
+    try:
+        if mode == 'name':
+            url = 'http://www.cninfo.com.cn/new/information/topSearch/detailOfQuery'
+            data = {'keyWord': key,
+                    'maxSecNum': 10,
+                    'maxListNum': 5,
+    				}
+            r = requests.post(url, headers=hd, data=data)
+            info = r.json()['keyBoardList'][0]
+            
+        elif mode == 'code':
+            url = 'http://www.cninfo.com.cn/new/information/topSearch/query'
+            data = {'keyWord': key,
+                   'maxNum': 10}
+            org_id = 'error'
+            r = requests.post(url, headers=hd, data=data)
+            
+            if type_ == 'stock':
+                for record in r.json():
+                    if '股' in record['category']:
+                        info = record
+                        break
+            else:                   
+                for record in r.json():
+                    if '基金' in record['category'] or 'QDII' in record['category'] :
+                        info = record
+                        break
+    except: pass
+    output = {'code': info['code'],
+              'name': info['zwjc'],
+              'orgId': info['orgId'],
+              'type': type_,
+              'type_d': info['category']}
+    
+    return output
 
 class cninf_orgid_finder:
     def __init__(self):
@@ -51,7 +129,7 @@ class cninf_orgid_finder:
                        }
         
         print('Initialised successfully')
-        print('-'*32)     
+        print('-'*32) 
         
     def get_orgid(self, key:str, mode = 'code', type_ = 'fund', verbose = True):
         '''
@@ -79,48 +157,10 @@ class cninf_orgid_finder:
             
         '''
         
-        hd = {
-            'Host': 'www.cninfo.com.cn',
-            'Origin': 'http://www.cninfo.com.cn',
-            'Pragma': 'no-cache',
-            'Accept-Encoding': 'gzip,deflate',
-            'Connection': 'keep-alive',
-            'Content-Length': '70',
-            'User-Agent':  random.choice(self.user_agents),
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            'Accept': 'application/json,text/plain,*/*',
-            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8'}
-        
-        org_id = 'error'
-        try:
-            if mode == 'name':
-                url = 'http://www.cninfo.com.cn/new/information/topSearch/detailOfQuery'
-                data = {'keyWord': key,
-                        'maxSecNum': 10,
-                        'maxListNum': 5,
-        				}
-                r = requests.post(url, headers=hd, data=data)
-                org_id = r.json()['keyBoardList'][0]['orgId']
-                
-            elif mode == 'code':
-                url = 'http://www.cninfo.com.cn/new/information/topSearch/query'
-                data = {'keyWord': key,
-                       'maxNum': 10}
-                org_id = 'error'
-                r = requests.post(url, headers=hd, data=data)
-                
-                if type_ == 'stock':
-                    for record in r.json():
-                        if '股' in record['category']:
-                            print('found')
-                            org_id = record['orgId']
-                            break
-                else:                   
-                    for record in r.json():
-                        if '基金' in record['category'] or 'QDII' in record['category'] :
-                            org_id = record['orgId']
-                            break
-        except: pass
+        info = find_info(random.choice(self.user_agents),
+                         key, type_, mode)
+        if len(info) > 0:
+            org_id = info['orgId']
         
         if verbose:
             print('-'*20)
@@ -157,7 +197,7 @@ class cninf_orgid_finder:
         
         output_dict = {}
         failed_keys = []
-        for key in key_list:
+        for key in tqdm(key_list):
             try:
                 org_id = self.get_orgid(key, mode)
             except:
@@ -177,5 +217,4 @@ class cninf_orgid_finder:
 if __name__ == '__main__':
     finder = cninf_orgid_finder()
     
-    test_keys = ['000001', '000003', '0000019']
-    test_orgids, test_fails = finder.init_key2orgid_dict(test_keys, mode = 'code')
+    test = finder.get_orgid('000001', type_ = 'fund', mode = 'code')

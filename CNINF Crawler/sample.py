@@ -44,10 +44,12 @@ The orgID is already known: jjjl0000031
 target_weblink = 'http://static.cninfo.com.cn/'
 store_path = 'F:/eastmoney/test'
 code2orgid_dict_path = 'F:/eastmoney/cninf_orgid_dict.xlsx'
-crawler = cninf_crawler(code2orgid_dict_path, store_path, target_weblink)
+crawler = cninf_crawler(code2orgid_dict_path, target_weblink)
 
 fund_reports = crawler.crawl_single_fund('000001', '2020-01-01', '2022-01-01', 
                                          'all', 'fund', True)
 
 stock_reports = crawler.crawl_single_fund('000001,gssz0000001', '2020-01-01', '2022-01-01', 
                                          'all', 'stock', True)
+
+saved_files = crawler.save_file('000001', fund_reports, store_path)
